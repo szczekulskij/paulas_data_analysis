@@ -16,6 +16,13 @@ def get_data():
 
     raw_data["Gender"] = raw_data.apply(lambda row : "male" if row["Gender"] == 1 else "female", axis = 1)
     raw_data["Handedness"] = raw_data.apply(lambda row : "left" if row["Handedness"] == 1 else "right", axis = 1)
+    # Add another way to looking at Education
+    raw_data["BUCKETED_Education"] = raw_data.apply(lambda row : 
+                                        "UG" if int(row["Education"]) in [1,2,3] else \
+                                        "gradNHigher" if row["Education"] in [4,5] else \
+                                        "Other"
+                                        ,axis=1)
+                                        
     raw_data["Education"] = raw_data.apply(lambda row : 
                                            "UG1" if row["Education"] == 1 else \
                                            "UG2" if row["Education"] == 2 else \
@@ -28,7 +35,7 @@ def get_data():
     return raw_data.copy(deep = True)\
                 [[
                 # Metrics for checking correlation
-                "Participant_N", "Age", "Education", "Gender",
+                "Participant_N", "Age", "Education", "BUCKETED_Education", "Gender",
                 "Handedness", "Self_ID", "AQ10_Score", "Hand_Cms", "Arm_Cms",
 
                 # Score metrics
@@ -39,3 +46,22 @@ def get_data():
     
 
     
+# Add a new (bucketed) column for grouping AQ_10_Score
+def add_bucket_AQ10_Score(df, grouping_interval):
+    '''
+    grouping_interval like [0,4,7,10]
+    '''
+    # Check
+    if 0 not in grouping_interval or 10 not in grouping_interval: raise Exception("len(grouping_interval) has to be either 3 or 4, and has to incldue 0 and 10")
+    if len(grouping_interval)==3:
+        def row_func(int):
+            if int <=grouping_interval[1]: return "noAutism"
+            else : return "Autism"
+    elif len(grouping_interval)==4:
+        def row_func(int):
+            if int <=grouping_interval[1]: return "noAutism"
+            elif int <=grouping_interval[2]: return "littleAutism"
+            else : return "Autism"
+    else: 
+        raise Exception("len(grouping_interval) has to be either 3 or 4, and has to incldue 0 and 10")
+    df["BUCKETED_AQ10_Score"] = df.apply(lambda row : row_func(row["AQ10_Score"]), axis = 1)
