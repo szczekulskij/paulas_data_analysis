@@ -12,7 +12,7 @@ def get_statistics_for_AQ10(grouping_interval):
         # "Gender",
         # "Handedness",
         "TextureScore",
-        # "SizeScore",
+        "PleasantnessSum",
         "WeightScore",
         "SummedUpScore",
         "FullGuessScore"

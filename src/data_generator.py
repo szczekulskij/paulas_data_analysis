@@ -1,3 +1,5 @@
+
+from numpy import mean
 import pandas as pd 
 def get_data():
     raw_data = pd.read_excel("data.xlsx")
@@ -6,7 +8,8 @@ def get_data():
     raw_data["Object2FullGuess"] = raw_data.apply(lambda row : 1 if (row["O2AssigTex_X_Rep"] + row["O2AssigSize_X_Rep"] + row["O2AssigWeight_X_Rep"]) == 3 else 0 , axis = 1)
     raw_data["Object3FullGuess"] = raw_data.apply(lambda row : 1 if (row["O3AssigTex_X_Rep"] + row["O3AssigSize_X_Rep"] + row["O3AssigWeight_X_Rep"]) == 3 else 0 , axis = 1)
     raw_data["Object4FullGuess"] = raw_data.apply(lambda row : 1 if (row["O4AssigTex_X_Rep"] + row["O4AssigSize_X_Rep"] + row["O4AssigWeight_X_Rep"]) == 3 else 0 , axis = 1)
-
+    raw_data["PleasantnessSum"] = raw_data.apply(lambda row : mean(row["O1_Pleasantness"] + row["O2_Pleasantness"] + row["O3_Pleasantness"] +row["O4_Pleasantness"]), axis = 1)
+    raw_data["selfIdentyfing"] = raw_data.apply(lambda row : "noSpecialIlnesses" if row["Self_ID"] == 6 else "SpecialIlness" , axis = 1)
 
     raw_data["TextureScore"] = raw_data["O1AssigTex_X_Rep"] + raw_data["O2AssigTex_X_Rep"] + raw_data["O3AssigTex_X_Rep"] + raw_data["O4AssigTex_X_Rep"]
     raw_data["SizeScore"] = raw_data["O1AssigSize_X_Rep"] + raw_data["O2AssigSize_X_Rep"] + raw_data["O3AssigSize_X_Rep"] + raw_data["O4AssigSize_X_Rep"]
@@ -38,12 +41,11 @@ def get_data():
                 [[
                 # Metrics for checking correlation
                 "Participant_N", "Age", "Education", "BUCKETED_Education", "Gender",
-                "Handedness", "Self_ID", "AQ10_Score", "Hand_Cms", "Arm_Cms",
+                "Handedness", "Self_ID", "AQ10_Score", "Hand_Cms", "Arm_Cms", "selfIdentyfing",
 
                 # Score metrics
                 "TextureScore", "SizeScore", "WeightScore", "SummedUpScore", 
-                "FullGuessScore",
-                # "Object1FullGuess", "Object2FullGuess", "Object3FullGuess", "Object4FullGuess"
+                "FullGuessScore", "PleasantnessSum"
                 ]]   
     
 
