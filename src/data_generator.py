@@ -11,7 +11,9 @@ def get_data():
     raw_data["TextureScore"] = raw_data["O1AssigTex_X_Rep"] + raw_data["O2AssigTex_X_Rep"] + raw_data["O3AssigTex_X_Rep"] + raw_data["O4AssigTex_X_Rep"]
     raw_data["SizeScore"] = raw_data["O1AssigSize_X_Rep"] + raw_data["O2AssigSize_X_Rep"] + raw_data["O3AssigSize_X_Rep"] + raw_data["O4AssigSize_X_Rep"]
     raw_data["WeightScore"] = raw_data["O1AssigWeight_X_Rep"] + raw_data["O2AssigWeight_X_Rep"] + raw_data["O3AssigWeight_X_Rep"] + raw_data["O4AssigWeight_X_Rep"]
-    raw_data["SummedUpScore"] = raw_data["TextureScore"] + raw_data["SizeScore"] + raw_data["WeightScore"]
+    # raw_data["SummedUpScore"] = raw_data["TextureScore"] + raw_data["SizeScore"] + raw_data["WeightScore"]
+    # remove size score
+    raw_data["SummedUpScore"] = raw_data["TextureScore"] +  raw_data["WeightScore"]
     raw_data["FullGuessScore"] = raw_data["Object1FullGuess"] + raw_data["Object2FullGuess"] + raw_data["Object3FullGuess"] +raw_data["Object4FullGuess"]
 
     raw_data["Gender"] = raw_data.apply(lambda row : "male" if row["Gender"] == 1 else "female", axis = 1)
@@ -22,7 +24,7 @@ def get_data():
                                         "gradNHigher" if row["Education"] in [4,5] else \
                                         "Other"
                                         ,axis=1)
-                                        
+
     raw_data["Education"] = raw_data.apply(lambda row : 
                                            "UG1" if row["Education"] == 1 else \
                                            "UG2" if row["Education"] == 2 else \
@@ -65,3 +67,4 @@ def add_bucket_AQ10_Score(df, grouping_interval):
     else: 
         raise Exception("len(grouping_interval) has to be either 3 or 4, and has to incldue 0 and 10")
     df["BUCKETED_AQ10_Score"] = df.apply(lambda row : row_func(row["AQ10_Score"]), axis = 1)
+    return df
